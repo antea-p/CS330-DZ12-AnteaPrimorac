@@ -21,8 +21,8 @@ import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.ui.theme.CS330DZ12AnteaPr
 
 @Composable
 fun HomeScreen(
-    addIntake: () -> Unit,
-    openIntakeList: () -> Unit
+    addTransaction: () -> Unit,
+    openTransactionList: () -> Unit
 ) {
 
     Column(
@@ -31,21 +31,20 @@ fun HomeScreen(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Image(
+            // TODO: zamjena slike
             painter = painterResource(R.drawable.water_bottle),
-            contentDescription = "Water bottle",
+            contentDescription = "Transaction icon",
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(1f)
-                .clickable { openIntakeList() },
+                .clickable { openTransactionList() },
         )
         Button(
-            onClick = { addIntake() },
-            modifier = Modifier
-                .padding(16.dp)
-
+            onClick = { addTransaction() },
+            modifier = Modifier.padding(16.dp)
         ) {
             Text(
-                "Add intake",
+                "Add Transaction",
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(8.dp)
             )

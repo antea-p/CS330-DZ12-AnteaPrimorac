@@ -7,13 +7,13 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.data.db.IntakeDao
-import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.data.db.WaterIntakeDatabase
+import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.data.db.TransactionDao
+import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.data.db.TransactionDatabase
 import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.data.repository.DBRepository
 import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.data.repository.DBRepositoryImpl
-import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.data.repository.WaterIntakeMapper
-import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.domen.AppLogic
-import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.domen.AppLogicImpl
+import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.data.repository.TransactionMapper
+import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.domain.AppLogic
+import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.domain.AppLogicImpl
 import javax.inject.Singleton
 
 @Module
@@ -28,29 +28,29 @@ object AppModule {
 
     @Provides
     @Singleton
-    fun provideIntakeDao(database: WaterIntakeDatabase): IntakeDao {
-        return database.intakeDao
+    fun provideTransactionDao(database: TransactionDatabase): TransactionDao {
+        return database.transactionDao
     }
 
     @Provides
     @Singleton
-    fun provideWaterIntakeDatabase(app: Application): WaterIntakeDatabase {
+    fun provideTransactionDatabase(app: Application): TransactionDatabase {
         return Room.databaseBuilder(
             app,
-            WaterIntakeDatabase::class.java,
-            "water_intake_database"
+            TransactionDatabase::class.java,
+            "transaction_database"
         ).build()
     }
 
     @Provides
     @Singleton
-    fun provideDBRepository(intakeDao: IntakeDao, mapper: WaterIntakeMapper): DBRepository {
-        return DBRepositoryImpl(intakeDao, mapper)
+    fun provideDBRepository(transactionDao: TransactionDao, mapper: TransactionMapper): DBRepository {
+        return DBRepositoryImpl(transactionDao, mapper)
     }
 
     @Provides
-    fun provideWaterIntakeMapper(): WaterIntakeMapper {
-        return WaterIntakeMapper()
+    fun provideTransactionMapper(): TransactionMapper {
+        return TransactionMapper()
     }
 
     @Provides

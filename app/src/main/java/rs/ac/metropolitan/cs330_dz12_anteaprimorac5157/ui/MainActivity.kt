@@ -10,7 +10,7 @@ import androidx.compose.ui.Modifier
 import dagger.hilt.android.AndroidEntryPoint
 import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.ui.navigation.NavSetup
 import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.ui.theme.CS330DZ12AnteaPrimorac5157
-
+// TODO: remaining stuff from HW
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {

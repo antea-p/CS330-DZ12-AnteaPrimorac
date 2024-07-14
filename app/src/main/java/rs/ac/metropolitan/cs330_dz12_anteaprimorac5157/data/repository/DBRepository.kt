@@ -1,10 +1,10 @@
 package rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.data.repository
 
 import kotlinx.coroutines.flow.Flow
-import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.domen.WaterIntake
+import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.domain.Transaction
 
 interface DBRepository {
-    suspend fun getIntakes(): Flow<List<WaterIntake>>
-    suspend fun insertIntake(intake: WaterIntake): Long
-    suspend fun deleteIntake(intake: WaterIntake)
+    suspend fun getTransactions(): Flow<List<Transaction>>
+    suspend fun insertTransaction(transaction: Transaction): Long
+    suspend fun deleteTransaction(transaction: Transaction)
 }

@@ -1,46 +1,47 @@
 package rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.ui
 
+import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.launch
-import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.domen.AppLogic
-import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.domen.WaterIntake
+import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.domain.AppLogic
+import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.domain.Transaction
 import java.time.LocalDate
 import javax.inject.Inject
 
 @HiltViewModel
 class AppViewModel @Inject constructor(
     private val appLogic: AppLogic
-): ViewModel() {
-    private val _intakes = MutableLiveData<List<WaterIntake>>()
-    val intakes: MutableLiveData<List<WaterIntake>>
-        get() = _intakes
+) : ViewModel() {
+    private val _transactions = MutableLiveData<List<Transaction>>()
+    val transactions: LiveData<List<Transaction>>
+        get() = _transactions
 
-    fun loadIntakes() {
+    fun loadTransactions() {
         viewModelScope.launch {
-            appLogic.getIntakes().collect { intakes ->
-                _intakes.value = intakes
+            appLogic.getTransactions().collect { transactions ->
+                _transactions.value = transactions
             }
         }
     }
 
-    fun addIntake(intake: WaterIntake) {
+    fun addTransaction(transaction: Transaction) {
         viewModelScope.launch {
-            appLogic.insertIntake(intake)
+            appLogic.insertTransaction(transaction)
         }
     }
 
-    fun deleteIntake(intake: WaterIntake) {
+    fun deleteTransaction(transaction: Transaction) {
         viewModelScope.launch {
-            appLogic.deleteIntake(intake)
+            appLogic.deleteTransaction(transaction)
         }
     }
 
-    fun getIntakesByDate(date: LocalDate) {
-            viewModelScope.launch {
-                appLogic.intakeByDate(date)
-            }
+    fun getTransactionsByDate(date: LocalDate) {
+        viewModelScope.launch {
+            appLogic.getTransactionsByDate(date)
+        }
     }
 }

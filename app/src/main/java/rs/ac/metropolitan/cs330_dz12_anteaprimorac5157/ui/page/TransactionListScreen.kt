@@ -1,12 +1,10 @@
 package rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.ui.page
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -24,59 +22,62 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
-import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.domen.WaterIntake
-import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.ui.previewdata.waterIntakes
+import androidx.lifecycle.MutableLiveData
+import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.domain.Category
+import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.domain.Currency
+import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.domain.Transaction
+import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
-fun WaterIntakeListScreen(
-    intakes: LiveData<List<WaterIntake>>,
+fun TransactionListScreen(
+    transactions: LiveData<List<Transaction>>,
     padding: PaddingValues = PaddingValues(16.dp),
-    loadWaterIntake: () -> Unit,
-    navigateToAddIntake: () -> Unit
+    loadTransactions: () -> Unit,
+    navigateToAddTransaction: () -> Unit
 ) {
     LaunchedEffect(Unit) {
-        loadWaterIntake()
+        loadTransactions()
     }
 
     Scaffold(
         topBar = {
             TopAppBar(title = {
                 Text(
-                    text = "Water intakes",
+                    text = "Transactions",
                     style = MaterialTheme.typography.headlineLarge
                 )
             })
         },
         floatingActionButton = {
-            FloatingActionButton(onClick = { navigateToAddIntake() }) {
-                Icon(Icons.Filled.Add, contentDescription = "Add intake")
+            FloatingActionButton(onClick = { navigateToAddTransaction() }) {
+                Icon(Icons.Filled.Add, contentDescription = "Add transaction")
             }
         },
-        modifier = androidx.compose.ui.Modifier.padding(padding)
+        modifier = Modifier.padding(padding)
     ) { innerPadding ->
         LazyColumn(
             modifier = Modifier
                 .padding(innerPadding)
                 .padding(padding)
         ) {
-            if (!intakes.value.isNullOrEmpty()) {
-                val groupedIntakes = intakes.value!!.groupBy { it.date.toLocalDate() }
-                groupedIntakes.forEach { (date, intakesForDate) ->
+            if (!transactions.value.isNullOrEmpty()) {
+                val groupedTransactions = transactions.value!!.groupBy { it.date.toLocalDate() }
+                groupedTransactions.forEach { (date, transactionsForDate) ->
                     item {
                         Text(
-                            text = date.dayOfMonth.toString() + "." + date.monthValue + "." + date.year.toString() + ".",
+                            text = date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy")),
                             style = MaterialTheme.typography.titleLarge,
                             modifier = Modifier.padding(16.dp)
                         )
                     }
-                    items(intakesForDate) { intake ->  // Use intakesForDate instead of intakes.value!!
-                        WaterIntakeRowView(intake)
+                    items(transactionsForDate) { transaction ->
+                        TransactionRowView(transaction)
                     }
                 }
             }
@@ -85,8 +86,8 @@ fun WaterIntakeListScreen(
 }
 
 @Composable
-fun WaterIntakeRowView(
-    intake: WaterIntake,
+fun TransactionRowView(
+    transaction: Transaction,
 ) {
     Card(
         modifier = Modifier
@@ -96,41 +97,41 @@ fun WaterIntakeRowView(
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Start,
-            modifier = Modifier.padding(vertical = 8.dp)
+            horizontalArrangement = Arrangement.SpaceBetween,
+            modifier = Modifier.padding(16.dp)
         ) {
-            Image(
-                painter = painterResource(intake.imageForAmount()),
-                contentDescription = "Water bottle",
-                modifier = Modifier
-                    .height(32.dp)
-                    .padding(start = 16.dp)
-            )
             Column {
                 Text(
-                    text = intake.date.dayOfMonth.toString() + "." +
-                            intake.date.monthValue + "." +
-                            intake.date.year + " " +
-                            intake.date.hour + ":" + intake.date.minute,
-                    style = MaterialTheme.typography.bodyMedium.copy(fontWeight = FontWeight.Bold),
-                    modifier = Modifier.padding(start = 16.dp)
+                    text = transaction.category.name,
+                    style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
                 )
                 Text(
-                    text = intake.note.toString(),
-                    style = MaterialTheme.typography.bodyMedium,
-                    modifier = Modifier.padding(start = 16.dp)
+                    text = transaction.date.format(DateTimeFormatter.ofPattern("HH:mm")),
+                    style = MaterialTheme.typography.bodyMedium
                 )
             }
+            Text(
+                text = "${transaction.amount} ${transaction.currency}",
+                style = MaterialTheme.typography.bodyLarge
+            )
         }
     }
 }
 
 @Preview
 @Composable
-fun WaterIntakeListScreenPreview() {
-    WaterIntakeListScreen(
-        intakes = waterIntakes,
-        loadWaterIntake = {},
-        navigateToAddIntake = {}
+fun TransactionListScreenPreview() {
+    val mockTransactions = MutableLiveData(
+        listOf(
+            Transaction(1, 50.0, Currency.USD, Category.FOOD, LocalDateTime.now().minusDays(1), "Grocery shopping"),
+            Transaction(2, 20.0, Currency.EUR, Category.ENTERTAINMENT, LocalDateTime.now(), "Movie ticket"),
+            Transaction(3, 30.0, Currency.USD, Category.GASOLINE, LocalDateTime.now(), "Fuel")
+        )
     )
+
+    TransactionListScreen(
+            transactions = mockTransactions,
+            loadTransactions = {},
+            navigateToAddTransaction = {}
+        )
 }

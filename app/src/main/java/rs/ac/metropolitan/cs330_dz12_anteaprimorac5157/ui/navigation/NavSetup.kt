@@ -8,9 +8,9 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.ui.AppViewModel
-import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.ui.page.AddWaterIntakeScreen
+import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.ui.page.AddTransactionScreen
 import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.ui.page.HomeScreen
-import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.ui.page.WaterIntakeListScreen
+import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.ui.page.TransactionListScreen
 
 @Composable
 fun NavSetup(vm: AppViewModel = hiltViewModel()) {
@@ -20,22 +20,22 @@ fun NavSetup(vm: AppViewModel = hiltViewModel()) {
     NavHost(navController = navController, startDestination = NavigationRoutes.HomeScreen.route) {
         composable(route = NavigationRoutes.HomeScreen.route) {
             HomeScreen(
-                addIntake = {navController.navigateToAddIntake()},
-                openIntakeList = {navController.navigateToIntakeList()}
+                addTransaction = { navController.navigateToAddTransaction() },
+                openTransactionList = { navController.navigateToTransactionList() }
             )
         }
-        composable(route = NavigationRoutes.AddIntakeScreen.route) {
-            AddWaterIntakeScreen(
-                goBack = {navController.goBack()},
-                save = vm::addIntake
+        composable(route = NavigationRoutes.AddTransactionScreen.route) {
+            AddTransactionScreen(
+                goBack = { navController.goBack() },
+                save = vm::addTransaction
             )
         }
-        composable(route = NavigationRoutes.IntakeListScreen.route) {
-            WaterIntakeListScreen(
-                intakes = vm.intakes,
+        composable(route = NavigationRoutes.TransactionListScreen.route) {
+            TransactionListScreen(
+                transactions = vm.transactions,
                 padding = paddingValues,
-                loadWaterIntake = vm::loadIntakes,
-                navigateToAddIntake = {navController.navigateToAddIntake()}
+                loadTransactions = vm::loadTransactions,
+                navigateToAddTransaction = { navController.navigateToAddTransaction() }
             )
         }
     }
@@ -45,10 +45,10 @@ fun NavController.goBack() {
     this.popBackStack()
 }
 
-fun NavController.navigateToAddIntake() {
-    this.navigate(NavigationRoutes.AddIntakeScreen.route)
+fun NavController.navigateToAddTransaction() {
+    this.navigate(NavigationRoutes.AddTransactionScreen.route)
 }
 
-fun NavController.navigateToIntakeList() {
-    this.navigate(NavigationRoutes.IntakeListScreen.route)
+fun NavController.navigateToTransactionList() {
+    this.navigate(NavigationRoutes.TransactionListScreen.route)
 }

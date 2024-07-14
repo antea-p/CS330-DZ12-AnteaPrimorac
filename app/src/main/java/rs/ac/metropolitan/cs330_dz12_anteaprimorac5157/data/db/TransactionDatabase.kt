@@ -4,9 +4,8 @@ import androidx.room.Database
 import androidx.room.RoomDatabase
 import androidx.room.TypeConverters
 
-@Database(entities = [IntakeEntity::class], version = 1)
+@Database(entities = [TransactionEntity::class], version = 1)
 @TypeConverters(Converters::class)
-abstract class WaterIntakeDatabase: RoomDatabase() {
-    abstract val intakeDao: IntakeDao
-
+abstract class TransactionDatabase : RoomDatabase() {
+    abstract val transactionDao: TransactionDao
 }

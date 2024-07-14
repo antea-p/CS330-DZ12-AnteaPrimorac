@@ -2,8 +2,8 @@ package rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.ui.page
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,6 +14,8 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
@@ -32,21 +34,24 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.domen.IntakeAmount
-import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.domen.WaterIntake
+import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.domain.Category
+import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.domain.Currency
+import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.domain.Transaction
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @Composable
-fun AddWaterIntakeScreen(
+fun AddTransactionScreen(
     goBack: () -> Unit,
-    save: (WaterIntake) -> Unit
+    save: (Transaction) -> Unit
 ) {
-    var amount by remember { mutableStateOf(IntakeAmount.D25) } // Default to D25
-    var note by remember { mutableStateOf("") }
+    var amount by remember { mutableStateOf(0.0) }
+    var currency by remember { mutableStateOf(Currency.USD) }
+    var category by remember { mutableStateOf(Category.OTHER) }
     var date by remember { mutableStateOf(LocalDateTime.now()) }
+    var note by remember { mutableStateOf("") }
 
     Column(
         modifier = Modifier
@@ -71,35 +76,98 @@ fun AddWaterIntakeScreen(
                     )
                 }
                 Text(
-                    text = "Add Water Intake",
+                    text = "Add Transaction",
                     style = MaterialTheme.typography.titleLarge,
                     modifier = Modifier.padding(start = 16.dp)
                 )
             }
         }
+
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 16.dp),
+                .padding(vertical = 16.dp),
             horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-            IntakeAmount.entries.forEach { intakeAmount ->
-                Image(
-                    painter = painterResource(WaterIntake(null, LocalDateTime.now(), intakeAmount, null).imageForAmount()),
-                    contentDescription = "Water intake amount",
+            listOf(10.0, 20.0, 50.0, 100.0).forEach { preset ->
+                Box(
                     modifier = Modifier
-                        .height(100.dp)
-                        .clickable { amount = intakeAmount }
-                )
+                        .size(80.dp)
+                        .clickable { amount = preset }
+                        .border(
+                            width = 2.dp,
+                            color = if (amount == preset) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                            shape = MaterialTheme.shapes.medium
+                        )
+                ) {
+                    Text(
+                        text = "$${preset.toInt()}",
+                        modifier = Modifier.align(Alignment.Center),
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
             }
         }
-        Text(text = "Selected amount: $amount ml")
-        Text(text = "Selected date: ${date.dayOfMonth}.${date.monthValue}.${date.year} ${date.hour}:${date.minute}")
-        Spacer(modifier = Modifier.height(16.dp))
-        Row (horizontalArrangement = Arrangement.SpaceBetween){
+
+        Text(text = "Selected amount: $${amount}")
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            Currency.entries.forEach { currencyOption ->
+                Box(
+                    modifier = Modifier
+                        .size(60.dp)
+                        .clickable { currency = currencyOption }
+                        .border(
+                            width = 2.dp,
+                            color = if (currency == currencyOption) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                            shape = MaterialTheme.shapes.medium
+                        )
+                ) {
+                    Text(
+                        text = currencyOption.name,
+                        modifier = Modifier.align(Alignment.Center),
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
+            }
+        }
+
+        Row(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp),
+            horizontalArrangement = Arrangement.SpaceEvenly
+        ) {
+            Category.values().forEach { categoryOption ->
+                Box(
+                    modifier = Modifier
+                        .size(60.dp)
+                        .clickable { category = categoryOption }
+                        .border(
+                            width = 2.dp,
+                            color = if (category == categoryOption) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
+                            shape = MaterialTheme.shapes.medium
+                        )
+                ) {
+                    Text(
+                        text = categoryOption.name.take(1),
+                        modifier = Modifier.align(Alignment.Center),
+                        style = MaterialTheme.typography.titleMedium
+                    )
+                }
+            }
+        }
+
+        Text(text = "Selected date: ${date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"))}")
+        Row(horizontalArrangement = Arrangement.SpaceBetween) {
             DatePicker(date) { newDate -> date = newDate }
-            Spacer(modifier = Modifier.padding(16.dp))
-            TimePicker(date) { newTime -> date = date.withHour(newTime.hour).withMinute(newTime.minute) }
+            Spacer(modifier = Modifier.width(16.dp))
+            TimePicker(date) { newTime -> date = newTime }
         }
         Spacer(modifier = Modifier.height(16.dp))
         OutlinedTextField(
@@ -108,9 +176,11 @@ fun AddWaterIntakeScreen(
             label = { Text("Note") },
             modifier = Modifier.fillMaxWidth(),
         )
-        Spacer(modifier = Modifier.height(32.dp))
+
+        Spacer(modifier = Modifier.weight(1f))
+
         Button(onClick = {
-            save(WaterIntake(null, date, amount, note))
+            save(Transaction(null, amount, currency, category, date, note))
             goBack()
         }) {
             Text("Add")
@@ -158,6 +228,6 @@ fun TimePicker(currentTime: LocalDateTime, onTimeChange: (LocalDateTime) -> Unit
 
 @Preview
 @Composable
-fun AddWaterIntakePreview() {
-    AddWaterIntakeScreen({}, {})
+fun AddTransactionScreenPreview() {
+    AddTransactionScreen({}, {})
 }

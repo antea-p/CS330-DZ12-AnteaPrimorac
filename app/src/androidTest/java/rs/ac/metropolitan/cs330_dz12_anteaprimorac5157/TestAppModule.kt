@@ -10,10 +10,10 @@ import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.data.db.IntakeDao
 import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.data.db.WaterIntakeDatabase
 import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.data.repository.DBRepository
 import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.data.repository.DBRepositoryImpl
-import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.data.repository.WaterIntakeMapper
+import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.data.repository.TransactionMapper
 import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.di.AppModule
-import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.domen.AppLogic
-import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.domen.AppLogicImpl
+import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.domain.AppLogic
+import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.domain.AppLogicImpl
 import javax.inject.Singleton
 
 @Module
@@ -46,13 +46,13 @@ object TestAppModule {
 
     @Provides
     @Singleton
-    fun provideDBRepository(intakeDao: IntakeDao, mapper: WaterIntakeMapper): DBRepository {
+    fun provideDBRepository(intakeDao: IntakeDao, mapper: TransactionMapper): DBRepository {
         return DBRepositoryImpl(intakeDao, mapper)
     }
 
     @Provides
-    fun provideWaterIntakeMapper(): WaterIntakeMapper {
-        return WaterIntakeMapper()
+    fun provideWaterIntakeMapper(): TransactionMapper {
+        return TransactionMapper()
     }
 
     @Provides

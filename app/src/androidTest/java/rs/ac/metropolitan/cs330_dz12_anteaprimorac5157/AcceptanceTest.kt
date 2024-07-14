@@ -11,7 +11,7 @@ import org.junit.After
 import org.junit.Before
 import org.junit.Rule
 import org.junit.Test
-import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.data.db.WaterIntakeDatabase
+import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.data.db.TransactionDatabase
 import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.ui.MainActivity
 import javax.inject.Inject
 
@@ -25,7 +25,7 @@ class AcceptanceTest {
     val rule = createAndroidComposeRule<MainActivity>()
 
     @Inject
-    lateinit var database: WaterIntakeDatabase
+    lateinit var database: TransactionDatabase
 
     @Before
     fun setUp() {
