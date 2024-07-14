@@ -3,8 +3,6 @@ package rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.ui.page
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -12,13 +10,17 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.ArrowBack
 import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.DropdownMenuItem
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.ExposedDropdownMenuBox
+import androidx.compose.material3.ExposedDropdownMenuDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
@@ -34,13 +36,13 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.domain.Category
 import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.domain.Currency
 import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.domain.Transaction
 import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 
 @Composable
 fun AddTransactionScreen(
@@ -59,132 +61,147 @@ fun AddTransactionScreen(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(modifier = Modifier.fillMaxWidth()) {
-            Row (
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
-            ){
-                IconButton(
-                    modifier = Modifier
-                        .background(Color.Transparent)
-                        .scale(1.5f),
-                    onClick = { goBack() }) {
-                    Icon(
-                        imageVector = Icons.Filled.ArrowBack,
-                        contentDescription = "Back",
-                        tint = MaterialTheme.colorScheme.primary
-                    )
-                }
-                Text(
-                    text = "Add Transaction",
-                    style = MaterialTheme.typography.titleLarge,
-                    modifier = Modifier.padding(start = 16.dp)
+        HeaderSection(goBack)
+        AmountInput(amount) { amount = it }
+        CurrencySelection(currency) { currency = it }
+        CategorySelection(category) { category = it }
+        DateTimeSelection(date) { date = it }
+        NoteInput(note) { note = it }
+        Spacer(modifier = Modifier.weight(1f))
+        AddButton {
+            save(Transaction(null, amount, currency, category, date, note))
+            goBack()
+        }
+    }
+}
+
+@Composable
+fun HeaderSection(goBack: () -> Unit) {
+    Box(modifier = Modifier.fillMaxWidth()) {
+        Row(
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            IconButton(
+                modifier = Modifier
+                    .background(Color.Transparent)
+                    .scale(1.5f),
+                onClick = goBack
+            ) {
+                Icon(
+                    imageVector = Icons.Filled.ArrowBack,
+                    contentDescription = "Back",
+                    tint = MaterialTheme.colorScheme.primary
+                )
+            }
+            Text(
+                text = "Add Transaction",
+                style = MaterialTheme.typography.titleLarge,
+                modifier = Modifier.padding(start = 16.dp)
+            )
+        }
+    }
+}
+
+@Composable
+fun AmountInput(amount: Double, onAmountChange: (Double) -> Unit) {
+    OutlinedTextField(
+        value = amount.toString(),
+        onValueChange = { onAmountChange(it.toDoubleOrNull() ?: 0.0) },
+        label = { Text("Amount") },
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        modifier = Modifier.fillMaxWidth()
+    )
+}
+
+@Composable
+fun CurrencySelection(selectedCurrency: Currency, onCurrencySelect: (Currency) -> Unit) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(vertical = 8.dp),
+        horizontalArrangement = Arrangement.SpaceEvenly
+    ) {
+        Currency.values().forEach { currencyOption ->
+            Button(
+                onClick = { onCurrencySelect(currencyOption) },
+                colors = ButtonDefaults.buttonColors(
+                    containerColor = if (selectedCurrency == currencyOption)
+                        MaterialTheme.colorScheme.primary
+                    else
+                        MaterialTheme.colorScheme.secondary
+                )
+            ) {
+                Text(currencyOption.name)
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun CategorySelection(selectedCategory: Category, onCategorySelect: (Category) -> Unit) {
+    var expanded by remember { mutableStateOf(false) }
+
+    ExposedDropdownMenuBox(
+        expanded = expanded,
+        onExpandedChange = { expanded = !expanded },
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        OutlinedTextField(
+            readOnly = true,
+            value = selectedCategory.name,
+            onValueChange = { },
+            label = { Text("Category") },
+            trailingIcon = {
+                ExposedDropdownMenuDefaults.TrailingIcon(expanded = expanded)
+            },
+            modifier = Modifier.menuAnchor()
+        )
+        ExposedDropdownMenu(
+            expanded = expanded,
+            onDismissRequest = { expanded = false }
+        ) {
+            Category.values().forEach { categoryOption ->
+                DropdownMenuItem(
+                    text = { Text(categoryOption.name) },
+                    onClick = {
+                        onCategorySelect(categoryOption)
+                        expanded = false
+                    }
                 )
             }
         }
+    }
+}
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            listOf(10.0, 20.0, 50.0, 100.0).forEach { preset ->
-                Box(
-                    modifier = Modifier
-                        .size(80.dp)
-                        .clickable { amount = preset }
-                        .border(
-                            width = 2.dp,
-                            color = if (amount == preset) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
-                            shape = MaterialTheme.shapes.medium
-                        )
-                ) {
-                    Text(
-                        text = "$${preset.toInt()}",
-                        modifier = Modifier.align(Alignment.Center),
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                }
-            }
+@Composable
+fun DateTimeSelection(selectedDate: LocalDateTime, onDateTimeSelect: (LocalDateTime) -> Unit) {
+    Row(horizontalArrangement = Arrangement.SpaceBetween) {
+        DatePicker(selectedDate) { newDate ->
+            onDateTimeSelect(newDate)
         }
-
-        Text(text = "Selected amount: $${amount}")
-
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            Currency.entries.forEach { currencyOption ->
-                Box(
-                    modifier = Modifier
-                        .size(60.dp)
-                        .clickable { currency = currencyOption }
-                        .border(
-                            width = 2.dp,
-                            color = if (currency == currencyOption) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
-                            shape = MaterialTheme.shapes.medium
-                        )
-                ) {
-                    Text(
-                        text = currencyOption.name,
-                        modifier = Modifier.align(Alignment.Center),
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                }
-            }
+        Spacer(modifier = Modifier.width(16.dp))
+        TimePicker(selectedDate) { newTime ->
+            onDateTimeSelect(newTime)
         }
+    }
+}
 
-        Row(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(vertical = 16.dp),
-            horizontalArrangement = Arrangement.SpaceEvenly
-        ) {
-            Category.values().forEach { categoryOption ->
-                Box(
-                    modifier = Modifier
-                        .size(60.dp)
-                        .clickable { category = categoryOption }
-                        .border(
-                            width = 2.dp,
-                            color = if (category == categoryOption) MaterialTheme.colorScheme.primary else MaterialTheme.colorScheme.onSurface,
-                            shape = MaterialTheme.shapes.medium
-                        )
-                ) {
-                    Text(
-                        text = categoryOption.name.take(1),
-                        modifier = Modifier.align(Alignment.Center),
-                        style = MaterialTheme.typography.titleMedium
-                    )
-                }
-            }
-        }
+@Composable
+fun NoteInput(note: String, onNoteChange: (String) -> Unit) {
+    OutlinedTextField(
+        value = note,
+        onValueChange = onNoteChange,
+        label = { Text("Note") },
+        modifier = Modifier.fillMaxWidth(),
+    )
+}
 
-        Text(text = "Selected date: ${date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm"))}")
-        Row(horizontalArrangement = Arrangement.SpaceBetween) {
-            DatePicker(date) { newDate -> date = newDate }
-            Spacer(modifier = Modifier.width(16.dp))
-            TimePicker(date) { newTime -> date = newTime }
-        }
-        Spacer(modifier = Modifier.height(16.dp))
-        OutlinedTextField(
-            value = note,
-            onValueChange = { note = it },
-            label = { Text("Note") },
-            modifier = Modifier.fillMaxWidth(),
-        )
-
-        Spacer(modifier = Modifier.weight(1f))
-
-        Button(onClick = {
-            save(Transaction(null, amount, currency, category, date, note))
-            goBack()
-        }) {
-            Text("Add")
-        }
+@Composable
+fun AddButton(onClick: () -> Unit) {
+    Button(onClick = onClick) {
+        Text("Add")
     }
 }
 

@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -101,25 +102,26 @@ fun TransactionRowView(transaction: Transaction) {
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.padding(16.dp)
         ) {
-            Icon(
-                painter = painterResource(id = if (transaction.currency == Currency.USD) R.drawable.ic_attach_money else R.drawable.ic_euro_symbol),
-                contentDescription = "Currency",
-                modifier = Modifier.size(40.dp)
+            Text(
+                text = "${transaction.amount}",
+                style = MaterialTheme.typography.bodyLarge
             )
-            Column {
+            Icon(
+                painter = painterResource(id = if (transaction.currency == Currency.USD) R.drawable.ic_attach_money else R.drawable.ic_euro),
+                contentDescription = "Currency",
+                modifier = Modifier.size(size = if (transaction.currency == Currency.USD) 20.dp else 17.dp)
+            )
+            Spacer(modifier = Modifier.size(10.dp))
+            Column(modifier = Modifier.weight(1f)) {
                 Text(
                     text = transaction.category.name,
                     style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
                 )
                 Text(
-                    text = transaction.date.format(DateTimeFormatter.ofPattern("HH:mm")),
+                    text = "Time: ${transaction.date.format(DateTimeFormatter.ofPattern("HH:mm, dd/MM/yyyy"))}",
                     style = MaterialTheme.typography.bodyMedium
                 )
             }
-            Text(
-                text = "${transaction.amount} ${transaction.currency}",
-                style = MaterialTheme.typography.bodyLarge
-            )
         }
     }
 }
