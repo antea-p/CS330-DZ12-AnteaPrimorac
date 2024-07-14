@@ -4,11 +4,14 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.navigation.NavController
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.ui.AppViewModel
 import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.ui.page.AddTransactionScreen
+import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.ui.page.TransactionDetailScreen
 import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.ui.page.TransactionListScreen
 
 @Composable
@@ -23,13 +26,39 @@ fun NavSetup(vm: AppViewModel = hiltViewModel()) {
                 padding = paddingValues,
                 loadTransactions = vm::loadTransactions,
                 navigateToAddTransaction = { navController.navigateToAddTransaction() },
-                //navigateToTransactionDetails = { /* TODO: Implement this */ }
+                navigateToTransactionDetails = { transactionId ->
+                    navController.navigate(NavigationRoutes.TransactionDetailsScreen.createRoute(transactionId))
+                }
             )
         }
         composable(route = NavigationRoutes.AddTransactionScreen.route) {
             AddTransactionScreen(
-                goBack = { navController.goBack() },
-                save = vm::addTransaction
+                goBack = { navController.popBackStack() },
+                save = { transaction ->
+                    vm.addTransaction(transaction)
+                    navController.popBackStack()
+                },
+            )
+        }
+        composable(
+            route = NavigationRoutes.TransactionDetailsScreen.route,
+            arguments = listOf(navArgument("transactionId") { type = NavType.IntType })
+        ) { backStackEntry ->
+            val transactionId = backStackEntry.arguments?.getInt("transactionId")
+            val transaction = vm.transactions.value?.find { it.id == transactionId }
+            TransactionDetailScreen(
+                transaction = transaction,
+                onDelete = { deletedTransaction ->
+                    vm.deleteTransaction(deletedTransaction)
+                    navController.popBackStack()
+                },
+                onEdit = { editedTransaction ->
+                    // TODO:
+                    navController.navigate(NavigationRoutes.AddTransactionScreen.route)
+                },
+                onBack = {
+                    navController.popBackStack()
+                }
             )
         }
     }
