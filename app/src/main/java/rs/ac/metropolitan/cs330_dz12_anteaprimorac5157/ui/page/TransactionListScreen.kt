@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
@@ -22,11 +23,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
+import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.R
 import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.domain.Category
 import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.domain.Currency
 import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.domain.Transaction
@@ -86,9 +89,7 @@ fun TransactionListScreen(
 }
 
 @Composable
-fun TransactionRowView(
-    transaction: Transaction,
-) {
+fun TransactionRowView(transaction: Transaction) {
     Card(
         modifier = Modifier
             .fillMaxWidth()
@@ -100,6 +101,11 @@ fun TransactionRowView(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.padding(16.dp)
         ) {
+            Icon(
+                painter = painterResource(id = if (transaction.currency == Currency.USD) R.drawable.ic_attach_money else R.drawable.ic_euro_symbol),
+                contentDescription = "Currency",
+                modifier = Modifier.size(40.dp)
+            )
             Column {
                 Text(
                     text = transaction.category.name,
