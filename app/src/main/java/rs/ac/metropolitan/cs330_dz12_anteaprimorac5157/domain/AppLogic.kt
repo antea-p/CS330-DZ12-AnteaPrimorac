@@ -7,6 +7,8 @@ interface AppLogic {
     suspend fun getTransactions(): Flow<List<Transaction>>
     suspend fun insertTransaction(transaction: Transaction): Long
     suspend fun deleteTransaction(transaction: Transaction)
+    suspend fun updateTransaction(transaction: Transaction)
+
     // TODO ?
 //    suspend fun getTransactionById(id: Int): Transaction?
     suspend fun getTransactionsByDate(date: LocalDate): Flow<List<Transaction>>

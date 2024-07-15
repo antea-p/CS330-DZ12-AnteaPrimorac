@@ -14,7 +14,7 @@
         android:name="rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.App"
         >
         <activity
-            android:name="rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.ui.MainActivity"
+            android:name=".ui.MainActivity"
             android:exported="true"
             android:theme="@style/Theme.CS330DZ12AnteaPrimorac5157">
             <intent-filter>

@@ -1,5 +1,6 @@
 package rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.ui.page
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -48,12 +49,23 @@ fun TransactionDetailScreen(
         transaction?.let { t ->
             TransactionDetails(t)
             Spacer(modifier = Modifier.weight(1f))
-            EditButton {
-                // TODO:
-                onEdit(t)
-            }
-            DeleteButton {
-                showDeleteConfirmation = true
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Button(
+                    onClick = { onEdit(t) },
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text("Edit")
+                }
+                Button(
+                    onClick = { showDeleteConfirmation = true },
+                    modifier = Modifier.weight(1f),
+                    colors = ButtonDefaults.buttonColors(containerColor = MaterialTheme.colorScheme.error)
+                ) {
+                    Text("Delete")
+                }
             }
         }
     }
@@ -101,6 +113,7 @@ fun TransactionDetails(transaction: Transaction) {
     ) {
         DetailItem("Amount", "${transaction.amount} ${transaction.currency}")
         DetailItem("Category", transaction.category.name)
+        //         DetailItem("Date", transaction.date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")))
         DetailItem("Date", transaction.date.toString())
         DetailItem("Note", transaction.note ?: "No note")
     }

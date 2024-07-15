@@ -22,6 +22,10 @@ class DBRepositoryImpl @Inject constructor(
         return transactionDao.insertTransaction(transactionMapper.toEntity(transaction))
     }
 
+    override suspend fun updateTransaction(transaction: Transaction) {
+        transactionDao.updateTransaction(transactionMapper.toEntity(transaction))
+    }
+
     override suspend fun deleteTransaction(transaction: Transaction) {
         transactionDao.deleteTransaction(transactionMapper.toEntity(transaction))
     }

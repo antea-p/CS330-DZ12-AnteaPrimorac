@@ -33,6 +33,13 @@ class AppViewModel @Inject constructor(
         }
     }
 
+    fun updateTransaction(transaction: Transaction) {
+        viewModelScope.launch {
+            appLogic.updateTransaction(transaction)
+            loadTransactions()
+        }
+    }
+
     fun deleteTransaction(transaction: Transaction) {
         viewModelScope.launch {
             appLogic.deleteTransaction(transaction)

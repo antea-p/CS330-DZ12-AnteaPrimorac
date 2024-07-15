@@ -17,6 +17,10 @@ class AppLogicImpl @Inject constructor(
         return dbRepository.insertTransaction(transaction)
     }
 
+    override suspend fun updateTransaction(transaction: Transaction) {
+        dbRepository.updateTransaction(transaction)
+    }
+
     // TODO: check
 
     override suspend fun getTransactionsByDate(date: LocalDate): Flow<List<Transaction>> {

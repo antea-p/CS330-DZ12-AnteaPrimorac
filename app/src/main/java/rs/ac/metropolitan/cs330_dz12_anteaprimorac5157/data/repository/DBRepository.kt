@@ -6,5 +6,6 @@ import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.domain.Transaction
 interface DBRepository {
     suspend fun getTransactions(): Flow<List<Transaction>>
     suspend fun insertTransaction(transaction: Transaction): Long
+    suspend fun updateTransaction(transaction: Transaction)
     suspend fun deleteTransaction(transaction: Transaction)
 }

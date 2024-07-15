@@ -1,6 +1,10 @@
 package rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.data.db
 
-import androidx.room.*
+import androidx.room.Dao
+import androidx.room.Delete
+import androidx.room.Query
+import androidx.room.Update
+import androidx.room.Upsert
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -10,6 +14,9 @@ interface TransactionDao {
 
     @Upsert
     suspend fun insertTransaction(transaction: TransactionEntity): Long
+
+    @Update
+    suspend fun updateTransaction(transaction: TransactionEntity)
 
     @Delete
     suspend fun deleteTransaction(transaction: TransactionEntity)

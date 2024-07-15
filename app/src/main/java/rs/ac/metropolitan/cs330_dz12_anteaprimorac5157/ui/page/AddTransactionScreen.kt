@@ -28,6 +28,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableDoubleStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
@@ -46,14 +47,15 @@ import java.time.LocalDateTime
 
 @Composable
 fun AddTransactionScreen(
+    transaction: Transaction? = null,
     goBack: () -> Unit,
     save: (Transaction) -> Unit
 ) {
-    var amount by remember { mutableStateOf(0.0) }
-    var currency by remember { mutableStateOf(Currency.USD) }
-    var category by remember { mutableStateOf(Category.OTHER) }
-    var date by remember { mutableStateOf(LocalDateTime.now()) }
-    var note by remember { mutableStateOf("") }
+    var amount by remember { mutableDoubleStateOf(transaction?.amount ?: 0.0) }
+    var currency by remember { mutableStateOf(transaction?.currency ?: Currency.USD) }
+    var category by remember { mutableStateOf(transaction?.category ?: Category.OTHER) }
+    var date by remember { mutableStateOf(transaction?.date ?: LocalDateTime.now()) }
+    var note by remember { mutableStateOf(transaction?.note ?: "") }
 
     Column(
         modifier = Modifier
@@ -61,22 +63,22 @@ fun AddTransactionScreen(
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        HeaderSection(goBack)
+        HeaderSection(goBack, transaction != null)
         AmountInput(amount) { amount = it }
         CurrencySelection(currency) { currency = it }
         CategorySelection(category) { category = it }
         DateTimeSelection(date) { date = it }
         NoteInput(note) { note = it }
         Spacer(modifier = Modifier.weight(1f))
-        AddButton {
-            save(Transaction(null, amount, currency, category, date, note))
+        AddButton(transaction != null) {
+            save(Transaction(transaction?.id, amount, currency, category, date, note))
             goBack()
         }
     }
 }
 
 @Composable
-fun HeaderSection(goBack: () -> Unit) {
+fun HeaderSection(goBack: () -> Unit, isEditing: Boolean) {
     Box(modifier = Modifier.fillMaxWidth()) {
         Row(
             horizontalArrangement = Arrangement.SpaceBetween,
@@ -95,7 +97,7 @@ fun HeaderSection(goBack: () -> Unit) {
                 )
             }
             Text(
-                text = "Add Transaction",
+                text = if (isEditing) "Edit Transaction" else "Add Transaction",
                 style = MaterialTheme.typography.titleLarge,
                 modifier = Modifier.padding(start = 16.dp)
             )
@@ -107,9 +109,12 @@ fun HeaderSection(goBack: () -> Unit) {
 fun AmountInput(amount: Double, onAmountChange: (Double) -> Unit) {
     OutlinedTextField(
         value = amount.toString(),
-        onValueChange = { onAmountChange(it.toDoubleOrNull() ?: 0.0) },
+        onValueChange = {
+            val newAmount = it.toDoubleOrNull() ?: amount
+            onAmountChange(newAmount)
+        },
         label = { Text("Amount") },
-        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
+        keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Decimal),
         modifier = Modifier.fillMaxWidth()
     )
 }
@@ -199,9 +204,9 @@ fun NoteInput(note: String, onNoteChange: (String) -> Unit) {
 }
 
 @Composable
-fun AddButton(onClick: () -> Unit) {
+fun AddButton(isEditing: Boolean, onClick: () -> Unit) {
     Button(onClick = onClick) {
-        Text("Add")
+        Text(if (isEditing) "Update" else "Add")
     }
 }
 
@@ -246,5 +251,5 @@ fun TimePicker(currentTime: LocalDateTime, onTimeChange: (LocalDateTime) -> Unit
 @Preview
 @Composable
 fun AddTransactionScreenPreview() {
-    AddTransactionScreen({}, {})
+    AddTransactionScreen(null, {}, {})
 }

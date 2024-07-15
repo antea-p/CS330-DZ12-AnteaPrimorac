@@ -31,13 +31,23 @@ fun NavSetup(vm: AppViewModel = hiltViewModel()) {
                 }
             )
         }
-        composable(route = NavigationRoutes.AddTransactionScreen.route) {
+        composable(
+            route = "${NavigationRoutes.AddTransactionScreen.route}?transactionId={transactionId}",
+            arguments = listOf(navArgument("transactionId") { type = NavType.IntType; defaultValue = -1 })
+        ) { backStackEntry ->
+            val transactionId = backStackEntry.arguments?.getInt("transactionId") ?: -1
+            val transaction = if (transactionId != -1) vm.transactions.value?.find { it.id == transactionId } else null
             AddTransactionScreen(
+                transaction = transaction,
                 goBack = { navController.popBackStack() },
-                save = { transaction ->
-                    vm.addTransaction(transaction)
+                save = { updatedTransaction ->
+                    if (transaction != null) {
+                        vm.updateTransaction(updatedTransaction)
+                    } else {
+                        vm.addTransaction(updatedTransaction)
+                    }
                     navController.popBackStack()
-                },
+                }
             )
         }
         composable(
@@ -53,8 +63,7 @@ fun NavSetup(vm: AppViewModel = hiltViewModel()) {
                     navController.popBackStack()
                 },
                 onEdit = { editedTransaction ->
-                    // TODO:
-                    navController.navigate(NavigationRoutes.AddTransactionScreen.route)
+                    navController.navigate("${NavigationRoutes.AddTransactionScreen.route}/${editedTransaction.id}")
                 },
                 onBack = {
                     navController.popBackStack()
