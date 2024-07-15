@@ -1,5 +1,6 @@
 package rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.data.repository
 
+import android.util.Log
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
 import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.data.db.TransactionDao
@@ -12,9 +13,12 @@ class DBRepositoryImpl @Inject constructor(
 ) : DBRepository {
 
     override suspend fun getTransactions(): Flow<List<Transaction>> {
+        Log.d("DBRepositoryImpl", "Fetching transactions from DAO")
         return transactionDao.getTransactions().map { transactionEntities ->
+            Log.d("DBRepositoryImpl", "Mapping ${transactionEntities.size} entities to transactions")
             transactionEntities.map { transactionEntity ->
-                transactionMapper.fromEntity(transactionEntity) }
+                transactionMapper.fromEntity(transactionEntity)
+            }
         }
     }
 

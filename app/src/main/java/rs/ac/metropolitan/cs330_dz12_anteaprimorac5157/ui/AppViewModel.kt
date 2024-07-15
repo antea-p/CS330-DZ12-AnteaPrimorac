@@ -1,5 +1,6 @@
 package rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.ui
 
+import android.util.Log
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -25,16 +26,21 @@ class AppViewModel @Inject constructor(
 
     fun loadTransactions() {
         viewModelScope.launch {
+            Log.d("AppViewModel", "Starting to load transactions")
             appLogic.getTransactions().collect { transactions ->
+                Log.d("AppViewModel", "Received ${transactions.size} transactions")
                 _transactions.value = transactions
+                Log.d("AppViewModel", "Updated _transactions value")
             }
         }
     }
 
     fun addTransaction(transaction: Transaction) {
         viewModelScope.launch {
+            Log.d("AppViewModel", "Adding new transaction")
             appLogic.insertTransaction(transaction)
-            loadTransactions() // Ponovno ucitavanje transakcija nakon dodavanja nove
+            Log.d("AppViewModel", "Transaction added, reloading transactions")
+            loadTransactions()
         }
     }
 

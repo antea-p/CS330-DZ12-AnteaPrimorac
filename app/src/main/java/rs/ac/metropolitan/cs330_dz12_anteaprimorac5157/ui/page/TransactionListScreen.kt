@@ -1,5 +1,6 @@
 package rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.ui.page
 
+import android.util.Log
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,6 +25,7 @@ import androidx.compose.material3.Text
 import androidx.compose.material3.TopAppBar
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.livedata.observeAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -49,11 +51,16 @@ fun TransactionListScreen(
     navigateToAddTransaction: () -> Unit,
     navigateToTransactionDetails: (Int) -> Unit
 ) {
-    val transactionsList = transactions.observeAsState(initial = emptyList())
+    val transactionsList by transactions.observeAsState(initial = emptyList())
 
     LaunchedEffect(Unit) {
         loadTransactions()
     }
+
+    LaunchedEffect(transactionsList) {
+        Log.d("TransactionListScreen", "Received ${transactionsList.size} transactions")
+    }
+
 
     Scaffold(
         topBar = {
@@ -72,7 +79,7 @@ fun TransactionListScreen(
         modifier = Modifier.padding(padding)
     ) { innerPadding ->
         TransactionList(
-            transactions = transactionsList.value,
+            transactions = transactionsList,
             paddingValues = innerPadding,
             navigateToTransactionDetails = navigateToTransactionDetails
         )
