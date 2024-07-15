@@ -30,6 +30,7 @@ import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.domain.Category
 import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.domain.Currency
 import rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.domain.Transaction
 import java.time.LocalDateTime
+import java.time.format.DateTimeFormatter
 
 @Composable
 fun TransactionDetailScreen(
@@ -113,8 +114,7 @@ fun TransactionDetails(transaction: Transaction) {
     ) {
         DetailItem("Amount", "${transaction.amount} ${transaction.currency}")
         DetailItem("Category", transaction.category.name)
-        //         DetailItem("Date", transaction.date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")))
-        DetailItem("Date", transaction.date.toString())
+        DetailItem("Date", transaction.date.format(DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm")))
         DetailItem("Note", transaction.note ?: "No note")
     }
 }

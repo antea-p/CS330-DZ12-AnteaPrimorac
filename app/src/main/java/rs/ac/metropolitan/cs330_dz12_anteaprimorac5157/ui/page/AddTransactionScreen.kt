@@ -2,6 +2,7 @@ package rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.ui.page
 
 import android.app.DatePickerDialog
 import android.app.TimePickerDialog
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -71,6 +72,7 @@ fun AddTransactionScreen(
         NoteInput(note) { note = it }
         Spacer(modifier = Modifier.weight(1f))
         AddButton(transaction != null) {
+            Log.d("AddTransactionScreen", "Added transaction $transaction")
             save(Transaction(transaction?.id, amount, currency, category, date, note))
             goBack()
         }

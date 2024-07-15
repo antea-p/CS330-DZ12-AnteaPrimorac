@@ -151,7 +151,7 @@ fun TransactionRowView(
                     style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
                 )
                 Text(
-                    text = "Time: ${transaction.date.format(DateTimeFormatter.ofPattern("HH:mm, dd/MM/yyyy"))}",
+                    text = "Time: ${transaction.date.format(DateTimeFormatter.ofPattern("HH:mm"))}",
                     style = MaterialTheme.typography.bodyMedium
                 )
             }

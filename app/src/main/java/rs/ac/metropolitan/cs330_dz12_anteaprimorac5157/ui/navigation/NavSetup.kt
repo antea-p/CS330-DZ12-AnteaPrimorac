@@ -1,5 +1,6 @@
 package rs.ac.metropolitan.cs330_dz12_anteaprimorac5157.ui.navigation
 
+import android.util.Log
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.runtime.Composable
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -42,8 +43,10 @@ fun NavSetup(vm: AppViewModel = hiltViewModel()) {
                 goBack = { navController.popBackStack() },
                 save = { updatedTransaction ->
                     if (transaction != null) {
+                        Log.d("NavSetup", "Calling updateTransaction on $transaction")
                         vm.updateTransaction(updatedTransaction)
                     } else {
+                        Log.d("NavSetup", "Calling addTransaction")
                         vm.addTransaction(updatedTransaction)
                     }
                     navController.popBackStack()
