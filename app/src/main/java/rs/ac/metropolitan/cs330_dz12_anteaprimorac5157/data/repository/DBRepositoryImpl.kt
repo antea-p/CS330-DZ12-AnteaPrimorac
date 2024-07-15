@@ -23,7 +23,10 @@ class DBRepositoryImpl @Inject constructor(
     }
 
     override suspend fun insertTransaction(transaction: Transaction): Long {
-        return transactionDao.insertTransaction(transactionMapper.toEntity(transaction))
+        val entity = transactionMapper.toEntity(transaction)
+        val newId = transactionDao.insertTransaction(entity)
+        Log.d("DBRepositoryImpl", "Inserted transaction with ID: $newId")
+        return newId
     }
 
     override suspend fun updateTransaction(transaction: Transaction) {

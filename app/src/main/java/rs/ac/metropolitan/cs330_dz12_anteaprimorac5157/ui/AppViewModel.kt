@@ -38,8 +38,13 @@ class AppViewModel @Inject constructor(
     fun addTransaction(transaction: Transaction) {
         viewModelScope.launch {
             Log.d("AppViewModel", "Adding new transaction")
-            appLogic.insertTransaction(transaction)
-            Log.d("AppViewModel", "Transaction added, reloading transactions")
+            val newId = appLogic.insertTransaction(transaction)
+            Log.d("AppViewModel", "Transaction added with ID: $newId")
+
+            // Azuriraj LiveData i ponovno ucitaj transakcije
+            val currentList = _transactions.value ?: emptyList()
+            _transactions.value = currentList + transaction.copy(id = newId.toInt())
+
             loadTransactions()
         }
     }

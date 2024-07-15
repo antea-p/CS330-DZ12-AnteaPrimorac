@@ -72,9 +72,9 @@ fun AddTransactionScreen(
         NoteInput(note) { note = it }
         Spacer(modifier = Modifier.weight(1f))
         AddButton(transaction != null) {
-            Log.d("AddTransactionScreen", "Added transaction $transaction")
-            save(Transaction(transaction?.id, amount, currency, category, date, note))
-            goBack()
+            val newTransaction = Transaction(transaction?.id, amount, currency, category, date, note)
+            Log.d("AddTransactionScreen", "Saving new transaction: $newTransaction")
+            save(newTransaction)
         }
     }
 }

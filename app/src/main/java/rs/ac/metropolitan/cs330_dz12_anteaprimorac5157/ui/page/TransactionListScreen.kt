@@ -107,7 +107,7 @@ fun TransactionList(
                         modifier = Modifier.padding(vertical = 16.dp)
                     )
                 }
-                items(transactionsForDate) { transaction ->
+                items(transactionsForDate, key = { it.id ?: it.hashCode() }) { transaction ->
                     TransactionRowView(
                         transaction = transaction,
                         onTransactionClick = navigateToTransactionDetails
