@@ -135,6 +135,10 @@ fun TransactionRowView(
             horizontalArrangement = Arrangement.SpaceBetween,
             modifier = Modifier.padding(16.dp)
         ) {
+            Text(
+                text = transaction.amount.toString(),
+                style = MaterialTheme.typography.bodyLarge.copy(fontWeight = FontWeight.Bold)
+            )
             Icon(
                 painter = painterResource(id = if (transaction.currency == Currency.USD) R.drawable.ic_attach_money else R.drawable.ic_euro),
                 contentDescription = "Currency",
