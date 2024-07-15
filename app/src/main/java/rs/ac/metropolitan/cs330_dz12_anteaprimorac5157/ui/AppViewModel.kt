@@ -19,6 +19,10 @@ class AppViewModel @Inject constructor(
     val transactions: LiveData<List<Transaction>>
         get() = _transactions
 
+    init {
+        loadTransactions()
+    }
+
     fun loadTransactions() {
         viewModelScope.launch {
             appLogic.getTransactions().collect { transactions ->
@@ -30,6 +34,7 @@ class AppViewModel @Inject constructor(
     fun addTransaction(transaction: Transaction) {
         viewModelScope.launch {
             appLogic.insertTransaction(transaction)
+            loadTransactions() // Ponovno ucitavanje transakcija nakon dodavanja nove
         }
     }
 

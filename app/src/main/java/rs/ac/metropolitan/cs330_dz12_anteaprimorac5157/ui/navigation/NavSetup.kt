@@ -32,7 +32,7 @@ fun NavSetup(vm: AppViewModel = hiltViewModel()) {
             )
         }
         composable(
-            route = "${NavigationRoutes.AddTransactionScreen.route}?transactionId={transactionId}",
+            route = NavigationRoutes.AddTransactionScreen.route,
             arguments = listOf(navArgument("transactionId") { type = NavType.IntType; defaultValue = -1 })
         ) { backStackEntry ->
             val transactionId = backStackEntry.arguments?.getInt("transactionId") ?: -1
@@ -54,7 +54,7 @@ fun NavSetup(vm: AppViewModel = hiltViewModel()) {
             route = NavigationRoutes.TransactionDetailsScreen.route,
             arguments = listOf(navArgument("transactionId") { type = NavType.IntType })
         ) { backStackEntry ->
-            val transactionId = backStackEntry.arguments?.getInt("transactionId")
+            val transactionId = backStackEntry.arguments?.getInt("transactionId") ?: -1
             val transaction = vm.transactions.value?.find { it.id == transactionId }
             TransactionDetailScreen(
                 transaction = transaction,
@@ -63,7 +63,7 @@ fun NavSetup(vm: AppViewModel = hiltViewModel()) {
                     navController.popBackStack()
                 },
                 onEdit = { editedTransaction ->
-                    navController.navigate("${NavigationRoutes.AddTransactionScreen.route}/${editedTransaction.id}")
+                    navController.navigate(NavigationRoutes.AddTransactionScreen.createRoute(editedTransaction.id))
                 },
                 onBack = {
                     navController.popBackStack()
@@ -78,7 +78,7 @@ fun NavController.goBack() {
 }
 
 fun NavController.navigateToAddTransaction() {
-    this.navigate(NavigationRoutes.AddTransactionScreen.route)
+    this.navigate(NavigationRoutes.AddTransactionScreen.createRoute())
 }
 
 fun NavController.navigateToTransactionList() {
