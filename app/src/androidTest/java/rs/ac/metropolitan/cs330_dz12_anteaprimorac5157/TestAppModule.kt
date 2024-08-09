@@ -51,7 +51,7 @@ object TestAppModule {
     }
 
     @Provides
-    fun provideWaterIntakeMapper(): TransactionMapper {
+    fun provideTransactionMapper(): TransactionMapper {
         return TransactionMapper()
     }
 
